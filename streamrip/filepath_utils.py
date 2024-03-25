@@ -1,4 +1,5 @@
 from string import printable
+from os import pathconf
 
 from pathvalidate import sanitize_filename, sanitize_filepath  # type: ignore
 
@@ -24,5 +25,6 @@ def clean_filepath(fn: str, restrict: bool = False) -> str:
     path = str(sanitize_filepath(fn))
     if restrict:
         path = "".join(c for c in path if c in ALLOWED_CHARS)
-
+    if len(path) > pathconf('/', 'PC_PATH_MAX'):
+        path = path[:pathconf('/', 'PC_PATH_MAX')]
     return path
